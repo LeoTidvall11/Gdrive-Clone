@@ -1,4 +1,4 @@
-package assignment.gdrive.Repository;
+package assignment.gdrive.repositories;
 
 import assignment.gdrive.models.FoldersModel;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
-package assignment.gdrive.Services;
+package assignment.gdrive.services;
 
-import assignment.gdrive.Repository.UserRepository;
+import assignment.gdrive.repositories.UserRepository;
 import assignment.gdrive.models.UserModel;
 import lombok.RequiredArgsConstructor;
 
