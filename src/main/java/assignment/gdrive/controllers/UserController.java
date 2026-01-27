@@ -2,14 +2,12 @@ package assignment.gdrive.controllers;
 
 import assignment.gdrive.dtos.RegisterRequest;
 import assignment.gdrive.dtos.UserResponse;
+import assignment.gdrive.models.UserModel;
 import assignment.gdrive.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/users")
@@ -20,16 +18,38 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request){
-        userService.registerUser(request.username(), request.password());
+        UserModel savedUser = userService.registerUser(request.username(),  request.password());
 
         UserResponse response = new UserResponse(
                 savedUser.getId(),
                 savedUser.getName(),
-                "Användarkonto har skapats framgångsrikt"
+                "User created successfully"
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
+    }
+
+    @PutMapping("/{username}")
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable String username,
+            @RequestBody RegisterRequest request)
+    {
+        UserModel updatedUser = userService.updateUser(username, request.username(), request.password());
+
+        UserResponse response = new UserResponse(
+                updatedUser.getId(),
+                updatedUser.getName(),
+                "User profile updated successfully"
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity <UserResponse> deleteUser(@PathVariable String username){
+        userService.deleteUser(username);
+       return ResponseEntity.noContent().build();
     }
 
 

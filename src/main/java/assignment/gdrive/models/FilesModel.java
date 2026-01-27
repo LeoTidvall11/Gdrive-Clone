@@ -10,8 +10,7 @@ import java.util.UUID;
 
 
 @Entity
-//Table för att kunna ge egna värden till tabellen och justera den.
-@Table(name = "folders")
+@Table(name = "files")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -15,26 +15,51 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserModel registerUser(String name, String rawPassword) {
-        //felhantering för om användarnamnet redan är använt
         if (userRepository.findByName(name).isPresent()) {
             throw new RuntimeException("User with name " + name + " already exists");
         }
 
-        //Skapar ny user model
         UserModel user = new UserModel();
-        //Sätter namnet
+
         user.setName(name);
 
-        //Hashar och sparar lösenord.
         String hashedPw = passwordEncoder.encode(rawPassword);
+
         user.setPasswordHash(hashedPw);
 
-        //Sparar användaren
         userRepository.save(user);
         return user;
 
     }
 
+    public UserModel updateUser(String currentUsername, String newUsername, String rawPassword) {
+        UserModel user = userRepository.findByName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found: " + currentUsername));
+
+        if (!currentUsername.equals(newUsername)) {
+            if (userRepository.findByName(newUsername).isPresent()) {
+                throw new RuntimeException("The username " + newUsername + " is already taken");
+            }
+            user.setName(newUsername);
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(rawPassword));
+        return userRepository.save(user);
     }
+
+
+    public void deleteUser(String name) {
+        {
+            UserModel user = userRepository.findByName(name)
+                    .orElseThrow(() -> new RuntimeException("User with name " + name + " does not exist"));
+
+            userRepository.delete(user);
+        }
+    }
+
+}
+
+
+
 
 
