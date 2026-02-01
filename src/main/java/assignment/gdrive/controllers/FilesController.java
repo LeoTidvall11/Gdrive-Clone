@@ -43,4 +43,10 @@ public class FilesController {
         fileService.deleteFile(fileId);
         return ResponseEntity.ok("File deleted");
     }
+
+    @PatchMapping("/{fileId}/rename")
+    public ResponseEntity<FilesModel> rename(@PathVariable UUID fileId, @RequestParam String newName) {
+        return ResponseEntity.ok(fileService.renameFile(fileId, newName));
+
+    }
 }

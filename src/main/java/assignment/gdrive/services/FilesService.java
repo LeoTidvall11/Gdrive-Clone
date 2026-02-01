@@ -45,4 +45,11 @@ public class FilesService {
         filesRepository.deleteById(fileId);
     }
 
+    public FilesModel renameFile(UUID fileId, String newName) {
+        FilesModel file = filesRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File could not be found"));
+        file.setName(newName);
+        return filesRepository.save(file);
+    }
+
 }
