@@ -1,6 +1,6 @@
 package assignment.gdrive.services;
 
-import assignment.gdrive.repositories.UserRepository;
+import assignment.gdrive.repositories.IUserRepository;
 import assignment.gdrive.models.UserModel;
 import lombok.RequiredArgsConstructor;
 
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final IUserRepository IUserRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserModel registerUser(String name, String rawPassword) {
-        if (userRepository.findByName(name).isPresent()) {
+        if (IUserRepository.findByName(name).isPresent()) {
             throw new RuntimeException("User with name " + name + " already exists");
         }
 
@@ -27,33 +27,33 @@ public class UserService {
 
         user.setPasswordHash(hashedPw);
 
-        userRepository.save(user);
+        IUserRepository.save(user);
         return user;
 
     }
 
     public UserModel updateUser(String currentUsername, String newUsername, String rawPassword) {
-        UserModel user = userRepository.findByName(currentUsername)
+        UserModel user = IUserRepository.findByName(currentUsername)
                 .orElseThrow(() -> new RuntimeException("User not found: " + currentUsername));
 
         if (!currentUsername.equals(newUsername)) {
-            if (userRepository.findByName(newUsername).isPresent()) {
+            if (IUserRepository.findByName(newUsername).isPresent()) {
                 throw new RuntimeException("The username " + newUsername + " is already taken");
             }
             user.setName(newUsername);
         }
 
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
-        return userRepository.save(user);
+        return IUserRepository.save(user);
     }
 
 
     public void deleteUser(String name) {
         {
-            UserModel user = userRepository.findByName(name)
+            UserModel user = IUserRepository.findByName(name)
                     .orElseThrow(() -> new RuntimeException("User with name " + name + " does not exist"));
 
-            userRepository.delete(user);
+            IUserRepository.delete(user);
         }
     }
 

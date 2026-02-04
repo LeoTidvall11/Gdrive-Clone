@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoldersModel {
+public class FolderModel {
     @Id
     @GeneratedValue
     private UUID id;
@@ -25,13 +25,13 @@ public class FoldersModel {
 
     @ManyToOne
     @JoinColumn (name = "parent_id")
-    private  FoldersModel parentFolder;
+    private FolderModel parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL)
-    private List<FoldersModel> subFolders = new ArrayList<>();
+    private List<FolderModel> subFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL)
-    private List<FilesModel> files = new ArrayList<>();
+    private List<FileModel> files = new ArrayList<>();
 
 
 

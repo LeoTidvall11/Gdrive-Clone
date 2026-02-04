@@ -1,7 +1,7 @@
 package assignment.gdrive.controllers;
 
-import assignment.gdrive.models.FilesModel;
-import assignment.gdrive.services.FilesService;
+import assignment.gdrive.models.FileModel;
+import assignment.gdrive.services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/files")
 @RequiredArgsConstructor
-public class FilesController {
+public class FileController {
 
-    private final FilesService fileService;
+    private final FileService fileService;
 
     @PostMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file,
@@ -29,7 +29,7 @@ public class FilesController {
 
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> download(@PathVariable UUID fileId){
-        FilesModel file = fileService.getFile(fileId);
+        FileModel file = fileService.getFile(fileId);
 
         return  ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -45,7 +45,7 @@ public class FilesController {
     }
 
     @PatchMapping("/{fileId}/rename")
-    public ResponseEntity<FilesModel> rename(@PathVariable UUID fileId, @RequestParam String newName) {
+    public ResponseEntity<FileModel> rename(@PathVariable UUID fileId, @RequestParam String newName) {
         return ResponseEntity.ok(fileService.renameFile(fileId, newName));
 
     }

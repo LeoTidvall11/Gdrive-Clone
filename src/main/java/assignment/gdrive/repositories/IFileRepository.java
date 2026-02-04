@@ -1,6 +1,6 @@
 package assignment.gdrive.repositories;
 
-import assignment.gdrive.models.FilesModel;
+import assignment.gdrive.models.FileModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface FilesRepository extends JpaRepository<FilesModel, UUID> {
+public interface IFileRepository extends JpaRepository<FileModel, UUID> {
 
-    List<FilesModel> findAllByFolderId(UUID folderId);
+    List<FileModel> findAllByFolderId(UUID folderId);
 }

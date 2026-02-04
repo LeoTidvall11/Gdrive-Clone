@@ -25,5 +25,5 @@ public class UserModel {
     private String passwordHash;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FoldersModel> folders = new ArrayList<>();
+    private List<FolderModel> folders = new ArrayList<>();
 }

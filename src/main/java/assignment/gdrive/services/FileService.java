@@ -1,8 +1,8 @@
 package assignment.gdrive.services;
 
-import assignment.gdrive.models.FilesModel;
-import assignment.gdrive.repositories.FilesRepository;
-import assignment.gdrive.repositories.FoldersRepository;
+import assignment.gdrive.models.FileModel;
+import assignment.gdrive.repositories.IFileRepository;
+import assignment.gdrive.repositories.IFolderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,17 +12,17 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class FilesService {
+public class FileService {
 
-    private final FilesRepository filesRepository;
-    private final FoldersRepository foldersRepository;
+    private final IFileRepository filesRepository;
+    private final IFolderRepository IFolderRepository;
 
     public void save(MultipartFile file, UUID folderId) throws IOException {
-        var folder = foldersRepository.findById(folderId)
+        var folder = IFolderRepository.findById(folderId)
                 .orElseThrow();
 
 
-        FilesModel newFile = new FilesModel();
+        FileModel newFile = new FileModel();
         newFile.setName(file.getOriginalFilename());
         newFile.setContent(file.getBytes());
         newFile.setFolder(folder);
@@ -32,7 +32,7 @@ public class FilesService {
     }
 
 
-    public FilesModel getFile(UUID fileId) {
+    public FileModel getFile(UUID fileId) {
         return filesRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File could not be found!"));
     }
@@ -45,8 +45,8 @@ public class FilesService {
         filesRepository.deleteById(fileId);
     }
 
-    public FilesModel renameFile(UUID fileId, String newName) {
-        FilesModel file = filesRepository.findById(fileId)
+    public FileModel renameFile(UUID fileId, String newName) {
+        FileModel file = filesRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File could not be found"));
         file.setName(newName);
         return filesRepository.save(file);

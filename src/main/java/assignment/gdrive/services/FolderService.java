@@ -2,10 +2,10 @@ package assignment.gdrive.services;
 
 import assignment.gdrive.dtos.FolderDTO;
 import assignment.gdrive.dtos.FolderResponse;
-import assignment.gdrive.models.FoldersModel;
+import assignment.gdrive.models.FolderModel;
 import assignment.gdrive.models.UserModel;
-import assignment.gdrive.repositories.FoldersRepository;
-import assignment.gdrive.repositories.UserRepository;
+import assignment.gdrive.repositories.IFolderRepository;
+import assignment.gdrive.repositories.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,28 +16,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FolderService {
 
-    private final FoldersRepository foldersRepository;
-    private final UserRepository userRepository;
+    private final IFolderRepository IFolderRepository;
+    private final IUserRepository IUserRepository;
 
     public FolderDTO createFolder(String folderName, UUID userId, UUID parentFolderId) {
-        UserModel user = userRepository.findById(userId)
+        UserModel user = IUserRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        FoldersModel newFolder = new FoldersModel();
+        FolderModel newFolder = new FolderModel();
         newFolder.setName(folderName);
         newFolder.setUser(user);
 
         if (parentFolderId != null) {
-            FoldersModel parent = foldersRepository.findById(parentFolderId)
+            FolderModel parent = IFolderRepository.findById(parentFolderId)
                     .orElseThrow(() -> new RuntimeException("Parent folder not found"));
             newFolder.setParentFolder(parent);
         }
-        FoldersModel saved = foldersRepository.save(newFolder);
+        FolderModel saved = IFolderRepository.save(newFolder);
         return new FolderDTO(saved.getId(), saved.getName());
     }
 
     public FolderResponse getFolderContent (UUID folderId) {
-        FoldersModel folder = foldersRepository.findById(folderId)
+        FolderModel folder = IFolderRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("Folder could not be found"));
 
         List<FolderResponse.SubFolderInfo> subFolders = folder.getSubFolders().stream()
@@ -52,7 +52,7 @@ public class FolderService {
     }
 
     public List<FolderDTO> getAllFolders(UUID userId) {
-        List<FoldersModel> folders = foldersRepository.findAllByUserId(userId);
+        List<FolderModel> folders = IFolderRepository.findAllByUserId(userId);
 
         return folders.stream()
                 .map(f -> new FolderDTO(f.getId(), f.getName()))
@@ -60,10 +60,10 @@ public class FolderService {
     }
 
     public FolderDTO renameFolder(UUID folderId, String newName) {
-        FoldersModel folder = foldersRepository.findById(folderId)
+        FolderModel folder = IFolderRepository.findById(folderId)
                 .orElseThrow(() -> new RuntimeException("Folder could not be found"));
                 folder.setName(newName);
-                foldersRepository.save(folder);
+                IFolderRepository.save(folder);
 
         return new FolderDTO(folder.getId(), folder.getName());
     }

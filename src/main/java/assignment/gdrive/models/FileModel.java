@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FilesModel {
+public class FileModel {
 
     @Id
     @GeneratedValue
@@ -30,5 +30,5 @@ public class FilesModel {
 
    @ManyToOne
     @JoinColumn(name = "folder_id")
-    private FoldersModel folder;
+    private FolderModel folder;
 }
