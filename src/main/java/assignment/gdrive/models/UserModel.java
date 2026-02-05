@@ -19,7 +19,7 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(unique = true, nullable = false)
-    private String name;
+    private String username;
 
     @Column(unique = true)
     private String passwordHash;
