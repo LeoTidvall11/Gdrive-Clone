@@ -5,6 +5,7 @@ import assignment.gdrive.dtos.FolderRequest;
 import assignment.gdrive.dtos.FolderResponse;
 import assignment.gdrive.services.FolderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-
+@Slf4j
 @RestController
 @RequestMapping("api/folders")
 @RequiredArgsConstructor
@@ -23,7 +24,6 @@ public class FolderController {
     public ResponseEntity<FolderDTO> createFolder(@RequestBody FolderRequest folderRequest){
         FolderDTO savedFolder = folderService.createFolder(
                 folderRequest.name(),
-                folderRequest.userId(),
                 folderRequest.parentId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFolder);
 

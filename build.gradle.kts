@@ -38,7 +38,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
+    implementation("com.auth0:java-jwt:4.4.0")
+
+    }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()

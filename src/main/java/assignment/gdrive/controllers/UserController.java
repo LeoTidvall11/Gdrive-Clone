@@ -22,12 +22,18 @@ public class UserController {
 
         UserResponse response = new UserResponse(
                 savedUser.getId(),
-                savedUser.getName(),
+                savedUser.getUsername(),
                 "User created successfully"
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login (@RequestBody RegisterRequest request){
+        String token = userService.login(request.username(), request.password());
+        return  ResponseEntity.ok(token);
     }
 
     @PutMapping("/{username}")
@@ -39,7 +45,7 @@ public class UserController {
 
         UserResponse response = new UserResponse(
                 updatedUser.getId(),
-                updatedUser.getName(),
+                updatedUser.getUsername(),
                 "User profile updated successfully"
         );
 
