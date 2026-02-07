@@ -4,6 +4,7 @@ import assignment.gdrive.dtos.FolderDTO;
 import assignment.gdrive.dtos.FolderRequest;
 import assignment.gdrive.dtos.FolderResponse;
 import assignment.gdrive.services.FolderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -21,30 +21,26 @@ public class FolderController {
     private final FolderService folderService;
 
     @PostMapping("/create")
-    public ResponseEntity<FolderDTO> createFolder(@RequestBody FolderRequest folderRequest){
-        FolderDTO savedFolder = folderService.createFolder(
-                folderRequest.name(),
-                folderRequest.parentId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedFolder);
-
-
+    public ResponseEntity<FolderDTO> createFolder(@Valid @RequestBody FolderRequest folderRequest){
+       FolderDTO savedFolder = folderService.createFolder(
+               folderRequest.name(),
+               folderRequest.parentId());
+       return ResponseEntity.status(HttpStatus.CREATED).body(savedFolder);
     }
 
-    @GetMapping("/{folderId}/content")
-    public ResponseEntity<FolderResponse> getFolderContent(@PathVariable UUID folderId) {
-        FolderResponse content = folderService.getFolderContent(folderId);
-
-        return ResponseEntity.ok(content);
+    @GetMapping("/{folderName}/content")
+    public ResponseEntity<FolderResponse> getFolderContent(@PathVariable String folderName) {
+    return ResponseEntity.ok(folderService.getFolderContentByName(folderName));
     }
 
-    @GetMapping("/{userId}/folders")
-    public ResponseEntity<List<FolderDTO>> getAllFolders(@PathVariable UUID userId) {
-        return ResponseEntity.ok(folderService.getAllFolders(userId));
+    @GetMapping("/all")
+    public ResponseEntity<List<FolderDTO>> getAllFolders() {
+        return ResponseEntity.ok(folderService.getMyFolders());
     }
 
-    @PatchMapping("/{folderId}/rename")
-    public ResponseEntity<FolderDTO> rename(@PathVariable UUID folderId, @RequestParam String newName) {
-        return ResponseEntity.ok(folderService.renameFolder(folderId, newName));
+    @PatchMapping("/{folderName}/rename")
+    public ResponseEntity<FolderDTO> rename(@PathVariable String folderName, @RequestParam String newName) {
+        return ResponseEntity.ok(folderService.renameFolder(folderName, newName));
     }
 
 }

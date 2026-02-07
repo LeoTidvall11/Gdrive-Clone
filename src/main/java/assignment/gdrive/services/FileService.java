@@ -3,11 +3,13 @@ package assignment.gdrive.services;
 import assignment.gdrive.Exceptions.ResourceNotFoundException;
 import assignment.gdrive.Exceptions.UnauthorizedAccessException;
 import assignment.gdrive.models.FileModel;
+import assignment.gdrive.models.FolderModel;
 import assignment.gdrive.models.UserModel;
 import assignment.gdrive.repositories.IFileRepository;
 import assignment.gdrive.repositories.IFolderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,10 +26,11 @@ public class FileService {
     private final IFolderRepository folderRepository;
     private final UserService userService;
 
-    public void save(MultipartFile file, UUID folderId) throws IOException {
-        var folder = folderRepository.findById(folderId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Target folder not found with id : " + folderId));
+    public void save(MultipartFile file, String folderName) throws IOException {
+        UserModel currentUser = userService.getCurrentUser();
+
+        FolderModel folder = folderRepository.findByNameAndUser(folderName, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Target folder not found" + folderName)
 
         String fileName = file.getOriginalFilename();
         if (fileRepository.existsByNameAndFolder(fileName, folder)) {

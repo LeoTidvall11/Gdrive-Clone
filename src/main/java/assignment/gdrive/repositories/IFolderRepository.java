@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -15,6 +16,5 @@ public interface IFolderRepository extends JpaRepository<FolderModel, UUID> {
     boolean existsByNameAndUserAndParentFolder(String name, UserModel user, FolderModel parentFolder);
     boolean existsByNameAndUserAndParentFolderIsNull(String name, UserModel user);
 
-
-
+    Optional<FolderModel> findByNameAndUser(String name, UserModel user);
 }

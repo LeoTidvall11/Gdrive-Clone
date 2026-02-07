@@ -4,6 +4,7 @@ import assignment.gdrive.dtos.RegisterRequest;
 import assignment.gdrive.dtos.UserResponse;
 import assignment.gdrive.models.UserModel;
 import assignment.gdrive.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,45 +18,28 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request){
         UserModel savedUser = userService.registerUser(request.username(),  request.password());
-
-        UserResponse response = new UserResponse(
-                savedUser.getId(),
-                savedUser.getUsername(),
-                "User created successfully"
-        );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new UserResponse(savedUser.getId(),savedUser.getUsername(),"User created"));
 
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login (@RequestBody RegisterRequest request){
-        String token = userService.login(request.username(), request.password());
-        return  ResponseEntity.ok(token);
+        return ResponseEntity.ok(userService.login(request.username(), request.password()));
     }
 
-    @PutMapping("/{username}")
-    public ResponseEntity<UserResponse> updateUser(
-            @PathVariable String username,
-            @RequestBody RegisterRequest request)
-    {
-        UserModel updatedUser = userService.updateUser(username, request.username(), request.password());
-
-        UserResponse response = new UserResponse(
-                updatedUser.getId(),
-                updatedUser.getUsername(),
-                "User profile updated successfully"
-        );
-
-        return ResponseEntity.ok(response);
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateMe(@RequestBody RegisterRequest request) {
+        UserModel updatedUser = userService.updateUser(request.username(), request.password());
+        return ResponseEntity.ok(new UserResponse(updatedUser.getId(), updatedUser.getUsername(), "Profile updated"));
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity <UserResponse> deleteUser(@PathVariable String username){
-        userService.deleteUser(username);
-       return ResponseEntity.noContent().build();
+    @DeleteMapping("/me")
+    public ResponseEntity <Void> deleteMe() {
+    userService.deleteCurrentUser();
+    return ResponseEntity.noContent().build();
     }
 
 

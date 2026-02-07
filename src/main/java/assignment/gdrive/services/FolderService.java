@@ -26,15 +26,16 @@ public class FolderService {
     public FolderDTO createFolder(String name, UUID parentId) {
         UserModel currentUser = userService.getCurrentUser();
 
-
         FolderModel parent = null;
         if (parentId != null) {
             parent = folderRepository.findById(parentId)
                     .orElseThrow(() -> new ResourceNotFoundException("Parent folder not found"));
+
             if (!parent.getUser().getId().equals(currentUser.getId())){
                 log.warn("Security alert. User: '{}' tried to create a folder in someone else folder", currentUser.getUsername());
                 throw new UnauthorizedAccessException("You do not have permission to modify this folder");
             }
+
         }
         boolean exists = (parent == null)
                 ? folderRepository.existsByNameAndUserAndParentFolderIsNull(name, currentUser)
@@ -50,45 +51,45 @@ public class FolderService {
         folderRepository.save(folder);
 
         log.info("Created folder '{}' for user '{}'", name, currentUser.getUsername());
-        return new FolderDTO(folder.getId(), folder.getName());
+        return FolderDTO.from(folder);
 
     }
 
-    public FolderResponse getFolderContent(UUID folderId) {
-        FolderModel folder = folderRepository.findById(folderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+    public FolderResponse getFolderContentByName(String folderName) {
+        UserModel currentUser = userService.getCurrentUser();
 
-        List<FolderResponse.SubFolderInfo> subFolders = folder.getSubFolders().stream()
-                .map(f -> new FolderResponse.SubFolderInfo(f.getId(), f.getName()))
-                .toList();
-
-        List<FolderResponse.FileInfo> files = folder.getFiles().stream()
-                .map(file -> new FolderResponse.FileInfo(file.getId(), file.getName()))
-                .toList();
-
-        return new FolderResponse(folder.getName(), subFolders, files);
+        return folderRepository.findByNameAndUser(folderName, currentUser)
+                .map(FolderResponse::from)
+                .orElseThrow(()-> new ResourceNotFoundException("Folder '" + folderName + "'not found"));
     }
 
-    public List<FolderDTO> getAllFolders(UUID userId) {
-        return folderRepository.findAllByUserId(userId).stream()
-                .map(f -> new FolderDTO(f.getId(), f.getName()))
+    public  List<FolderDTO> getMyFolders() {
+        UserModel currentUser = userService.getCurrentUser();
+        return folderRepository.findAllByUserId(currentUser.getId()).stream()
+                .map(FolderDTO::from)
                 .toList();
     }
 
-    public FolderDTO renameFolder(UUID folderId, String newName) {
-        FolderModel folder = folderRepository.findById(folderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
+    public FolderDTO renameFolder(String currentName, String newName) {
+
+        UserModel currentUser = userService.getCurrentUser();
+
+        FolderModel folder = folderRepository.findByNameAndUser(currentName, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found: " + currentName));
+
+        log.info("Renaming folder from '{}' to '{}' for user '{}'", currentName, newName, currentUser.getUsername());
 
         folder.setName(newName);
         folderRepository.save(folder);
 
-        log.info("Renamed folder to '{}'", newName);
-        return new FolderDTO(folder.getId(), folder.getName());
+        return FolderDTO.from(folder);
     }
 
     public FolderModel getFolderById(UUID id) {
         return folderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
     }
+
+
 
 }

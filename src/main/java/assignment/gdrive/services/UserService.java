@@ -35,16 +35,13 @@ public class UserService {
 
     }
 
-    public UserModel updateUser(String currentUsername, String newUsername, String rawPassword) {
-        UserModel user = IUserRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> {
-                    log.error("Update failed. Could not find user: '{}' ", currentUsername);
-                    return new ResourceNotFoundException("User not found: " + currentUsername);
-                });
+    public UserModel updateUser(String newUsername, String rawPassword) {
+        UserModel user = getCurrentUser();
+                String currentUsername = user.getUsername();
 
         if (!currentUsername.equals(newUsername)) {
             if (IUserRepository.existsByUsername(newUsername)) {
-                log.warn("Naming failed: '{}' already exists", newUsername);
+                log.warn("Update failed: Username '{}' already taken", newUsername);
                 throw new UserAlreadyExistsException("The username: " + newUsername + " is already taken");
             }
             user.setUsername(newUsername);
@@ -52,18 +49,18 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(rawPassword));
 
-        log.info("User '{}' was successfully updated", user.getUsername());
+        log.info("User '{}' (ID: {}) updated their profile", currentUsername, user.getId());
         return IUserRepository.save(user);
     }
 
 
 
-    public void deleteUser(String username) {
-        UserModel user = IUserRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User '" + username + "' does not exist"));
-
+    public void deleteCurrentUser() {
+        UserModel user = getCurrentUser();
         IUserRepository.delete(user);
-        log.info("User '{}' removed", username);
+
+        log.info("User: '{}' and all their data has been deleted", user.getUsername());
+
     }
 
     public String login(String username, String password){
