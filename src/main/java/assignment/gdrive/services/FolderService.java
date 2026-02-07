@@ -84,12 +84,4 @@ public class FolderService {
 
         return FolderDTO.from(folder);
     }
-
-    public FolderModel getFolderById(UUID id) {
-        return folderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Folder not found"));
-    }
-
-
-
 }
