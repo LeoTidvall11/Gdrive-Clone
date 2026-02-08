@@ -11,6 +11,7 @@ import assignment.gdrive.repositories.IFolderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -73,6 +74,8 @@ public class FolderService {
      * @return FolderResponse containing folder and its files and subfolders
      * @throws ResourceNotFoundException if folder not found
      */
+
+    @Transactional(readOnly = true)
     public FolderResponse getFolderContentByName(String folderName) {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -115,11 +118,11 @@ public class FolderService {
     }
 
     /**
-     * Deletes a folder and all it's content
+     * Deletes a folder and all its content
      * @param folderName the target folder to be deleted
      * @throws ResourceNotFoundException if folder not found
      */
-    public void DeleteFolder(String folderName) {
+    public void deleteFolder(String folderName) {
         UserModel currentUser = userService.getCurrentUser();
 
         FolderModel folder = folderRepository.findByNameAndUser(folderName, currentUser)

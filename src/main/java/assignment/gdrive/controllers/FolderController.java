@@ -45,7 +45,7 @@ public class FolderController {
 
     @DeleteMapping("/{folderName}")
     public ResponseEntity<FolderDTO> deleteFolder(@PathVariable String folderName) {
-        folderService.DeleteFolder(folderName);
+        folderService.deleteFolder(folderName);
         return ResponseEntity.noContent().build();
     }
 

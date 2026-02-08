@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
@@ -26,8 +28,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login (@RequestBody RegisterRequest request){
-        return ResponseEntity.ok(userService.login(request.username(), request.password()));
+        public ResponseEntity<Map<String, String>> login (@RequestBody RegisterRequest request){
+            String token = userService.login(request.username(), request.password());
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PutMapping("/me")

@@ -23,8 +23,8 @@ public class FileModel {
 
 
     private String name;
-    @Lob
-    @Column(name = "content", columnDefinition = "BYTEA")
+    @Column(name = "content")
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BINARY)
     private byte[] content;
 
 
