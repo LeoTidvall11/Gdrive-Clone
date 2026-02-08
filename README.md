@@ -2,8 +2,8 @@ GDrive API
 
 A secure, name-based file management system built with Spring Boot.
 
-This project is a high-performance backend for a cloud storage service.
-It focuses on Service-Level Security and Human-Readable URLs, moving away from complex UUIDs to a more intuitive name-based identification system.
+This is a school project designed to mimic Google drive. 
+It is a backend project for a cloud storage service with focus on good Architectural-Design and Human-Readable URLs, instead of UUIDs. 
 
 🛠 Tech Stack
 
