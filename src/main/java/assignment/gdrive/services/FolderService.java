@@ -23,6 +23,18 @@ public class FolderService {
     private final IFolderRepository folderRepository;
     private final UserService userService;
 
+
+    /**
+     * Creates a new folder for the current user
+     * If parentId is provided it creates a subfolder.
+     *
+     * @param name of the Folder
+     * @param parentId Optional id for the parent folder
+     * @return FolderDto with details of the created folder
+     * @throws ResourceNotFoundException if parent folder doesn't exist
+     * @throws UnauthorizedAccessException if user doesn't own parent folder
+     * @throws FolderAlreadyExistsException if folder name already exists in location
+     */
     public FolderDTO createFolder(String name, UUID parentId) {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -55,6 +67,12 @@ public class FolderService {
 
     }
 
+    /**
+     * Retrieves folder content by the name of the folder and current user
+     * @param folderName name of the folder to retrieve
+     * @return FolderResponse containing folder and its files and subfolders
+     * @throws ResourceNotFoundException if folder not found
+     */
     public FolderResponse getFolderContentByName(String folderName) {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -63,6 +81,10 @@ public class FolderService {
                 .orElseThrow(()-> new ResourceNotFoundException("Folder '" + folderName + "'not found"));
     }
 
+    /**
+     * Gets all folder belonging to the current user
+     * @return List of folderDTO representing the users folder
+     */
     public  List<FolderDTO> getMyFolders() {
         UserModel currentUser = userService.getCurrentUser();
         return folderRepository.findAllByUserId(currentUser.getId()).stream()
@@ -70,6 +92,13 @@ public class FolderService {
                 .toList();
     }
 
+    /**
+     * Renames an existing folder
+     * @param currentName The name of the current folder
+     * @param newName New name of the folder
+     * @return FolderDTO for the updated folder info
+     * @throws ResourceNotFoundException if the folder can't be found
+     */
     public FolderDTO renameFolder(String currentName, String newName) {
 
         UserModel currentUser = userService.getCurrentUser();
@@ -83,5 +112,20 @@ public class FolderService {
         folderRepository.save(folder);
 
         return FolderDTO.from(folder);
+    }
+
+    /**
+     * Deletes a folder and all it's content
+     * @param folderName the target folder to be deleted
+     * @throws ResourceNotFoundException if folder not found
+     */
+    public void DeleteFolder(String folderName) {
+        UserModel currentUser = userService.getCurrentUser();
+
+        FolderModel folder = folderRepository.findByNameAndUser(folderName, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Folder not found: " + folderName));
+
+        folderRepository.delete(folder);
+        log.info("Deleted folder '{}' from user '{}'", folderName, currentUser.getUsername());
     }
 }

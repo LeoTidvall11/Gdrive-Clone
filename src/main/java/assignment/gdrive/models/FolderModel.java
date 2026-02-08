@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FolderModel {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;

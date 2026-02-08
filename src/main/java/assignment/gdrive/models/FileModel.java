@@ -18,7 +18,7 @@ import java.util.UUID;
 public class FileModel {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
 

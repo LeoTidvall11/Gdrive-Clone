@@ -21,7 +21,7 @@ public class UserModel {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String passwordHash;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

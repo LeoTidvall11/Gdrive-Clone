@@ -21,6 +21,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    /**
+     * Registers a new user with a hashed password
+     * @param username the desired username
+     * @param rawPassword the desired password that's going to be hashed
+     * @return UserModel of the newly created user
+     * @throws UserAlreadyExistsException if there already is a user with that name
+     */
     public UserModel registerUser(String username, String rawPassword) {
         if (IUserRepository.existsByUsername(username)) {
           log.warn("Registration failed! Username {} is already in use", username);
@@ -35,6 +42,13 @@ public class UserService {
 
     }
 
+    /**
+     * Updates user information
+     * @param newUsername new username
+     * @param rawPassword new password
+     * @return UserModel with updated information
+     * @throws UserAlreadyExistsException if the new username is already taken
+     */
     public UserModel updateUser(String newUsername, String rawPassword) {
         UserModel user = getCurrentUser();
                 String currentUsername = user.getUsername();
@@ -54,7 +68,9 @@ public class UserService {
     }
 
 
-
+    /**
+     * Deletes the current user and all their data
+     */
     public void deleteCurrentUser() {
         UserModel user = getCurrentUser();
         IUserRepository.delete(user);
@@ -63,6 +79,14 @@ public class UserService {
 
     }
 
+    /**
+     * Authenticates a user and creates a jwt token
+     * @param username user's username
+     * @param password user's password
+     * @return Jwt token string
+     * @throws ResourceNotFoundException if user not found
+     * @throws UnauthorizedAccessException if password incorrect
+     */
     public String login(String username, String password){
         UserModel user = IUserRepository.findByUsername(username)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
@@ -77,6 +101,11 @@ public class UserService {
 
     }
 
+    /**
+     * Retrieves the current user
+     * @return UserModel of the current user
+     * @throws UnauthorizedAccessException if the user isn't authenticated
+     */
     public UserModel getCurrentUser() {
         var authentication = org.springframework.security.core.context.SecurityContextHolder
                 .getContext()

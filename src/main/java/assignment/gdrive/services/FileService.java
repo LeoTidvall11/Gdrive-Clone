@@ -25,7 +25,18 @@ public class FileService {
     private final IFolderRepository folderRepository;
     private final UserService userService;
 
+    /**
+     * Uploads and save a file to a folder
+     * @param file the multipart file to upload
+     * @param folderName the name of the target folder
+     * @return fileDto containing saved file information
+     * @throws IOException if the file reading would fail
+     * @throws ResourceNotFoundException if the folder can't be found
+     * @throws FileAlreadyExistsException if the fileName already exists in the folder
+     */
+
     public FileDTO saveFile(MultipartFile file, String folderName) throws IOException {
+
         UserModel currentUser = userService.getCurrentUser();
 
         FolderModel folder = folderRepository.findByNameAndUser(folderName, currentUser)
@@ -50,6 +61,12 @@ public class FileService {
 
     }
 
+    /**
+     * Retrieves all files in a folder for the current user
+     * @param folderName name of the folder
+     * @return List of fileDTO in the folder
+     * @throws ResourceNotFoundException if the folder can't be found
+     */
     public List<FileDTO> findAllByFolder(String folderName) {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -61,6 +78,11 @@ public class FileService {
                 .toList();
     }
 
+    /**
+     * Retrieves every file that belongs to the user
+     *
+     * @return List of fileDTO that belongs to the user
+     */
     public List <FileDTO> findAllByUser() {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -73,6 +95,13 @@ public class FileService {
     }
 
 
+    /**
+     * Download file by name from the target folder
+     * @param folderName the name of the folder
+     * @param fileName the name of the file
+     * @return FileModel with file content
+     * @throws ResourceNotFoundException if folder couldn't be found
+     */
     public FileModel downloadFile (String folderName, String fileName) {
         UserModel currentUser = userService.getCurrentUser();
 
@@ -84,6 +113,12 @@ public class FileService {
     }
 
 
+    /**
+     * Delete file by name in a specific folder
+     * @param folderName the name of the folder
+     * @param fileName the name of the file that should be deleted
+     * @throws ResourceNotFoundException if folder or file couldn't be found
+     */
     public void deleteFile(String folderName, String fileName) {
         UserModel currentUser = userService.getCurrentUser();
         FolderModel folder = folderRepository.findByNameAndUser(folderName, currentUser)
@@ -97,6 +132,14 @@ public class FileService {
         }
 
 
+    /**
+     * Renames a file in specified folder
+     * @param folderName the name of the target folder
+     * @param oldName the current name of the file
+     * @param newName the new name of the file
+     * @return FileDTO with updated file info
+     * @throws ResourceNotFoundException if folder or file is not found
+     */
     public FileDTO renameFile (String folderName, String oldName, String newName) {
         UserModel currentUser = userService.getCurrentUser();
 

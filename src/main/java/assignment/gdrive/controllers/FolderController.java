@@ -43,4 +43,10 @@ public class FolderController {
         return ResponseEntity.ok(folderService.renameFolder(folderName, newName));
     }
 
+    @DeleteMapping("/{folderName}")
+    public ResponseEntity<FolderDTO> deleteFolder(@PathVariable String folderName) {
+        folderService.DeleteFolder(folderName);
+        return ResponseEntity.noContent().build();
+    }
+
 }
