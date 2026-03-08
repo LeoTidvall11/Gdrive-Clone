@@ -1,26 +1,30 @@
-GDrive API
-
+# GDrive API
 A secure, name-based file management system built with Spring Boot.
 
-This is a school project designed to mimic Google drive. 
-It is a backend project for a cloud storage service with focus on good Architectural-Design and Human-Readable URLs, instead of UUIDs. 
+This is a school project designed to mimic Google Drive. It is a backend project 
+for a cloud storage service with focus on good architectural design, REST principles, 
+and human-readable URLs instead of UUIDs.
 
-🛠 Tech Stack
+## 🛠 Tech Stack
 
-    Java & Spring Boot
+- Java & Spring Boot
+- Spring Security, JWT & OAuth2 (Authentication/Authorization)
+- Spring HATEOAS (Hypermedia-driven REST)
+- PostgreSQL (Binary storage via BYTEA)
+- Hibernate & JPA (Relational mapping)
 
-    Spring Security & JWT (Authentication/Authorization)
+## ✨ Key Features
 
-    PostgreSQL (Binary storage via BYTEA)
+**Zero-ID Interface:** Access resources via names (e.g., `/download/Photos/cat.jpg`) 
+instead of cryptic IDs.
 
-    Hibernate & JPA (Relational mapping)
+**Hypermedia-Driven API:** Responses include HATEOAS links, allowing clients to 
+navigate the API without hardcoding URLs.
 
-✨ Key Features
+**GitHub Authentication:** Log in via GitHub using OpenID Connect. New accounts are 
+created automatically on first login.
 
-    Zero-ID Interface: Access resources via names (e.g., /download/Photos/cat.jpg) instead of cryptic IDs.
+**Pro-Grade Security:** Every request is validated against the authenticated user. 
+Unauthorized access is blocked at the database query level.
 
-    Pro-Grade Security: Every request is validated against the authenticated currentUser. Unauthorized access is blocked at the database query level.
-
-    Hierarchical Storage: Full support for nested folders and ownership validation.
-
-    Optimized Persistence: High-efficiency binary handling using specialized PostgreSQL column mapping.
+**Hierarchical Storage:** Full support for nested folders with ownership validation.
