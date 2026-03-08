@@ -21,8 +21,11 @@ public class UserModel {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @Column
     private String passwordHash;
+
+
+    private String githubId;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FolderModel> folders = new ArrayList<>();

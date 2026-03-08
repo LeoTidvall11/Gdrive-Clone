@@ -9,6 +9,8 @@ import assignment.gdrive.models.UserModel;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +93,9 @@ public class UserService {
         UserModel user = IUserRepository.findByUsername(username)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
+        if (user.getPasswordHash() == null){
+            throw new UnauthorizedAccessException("Account uses GitHub for authentication");
+        }
         if (!passwordEncoder.matches(password, user.getPasswordHash())){
             log.warn("Login failed. Wrong password for user: '{}'", username);
             throw new UnauthorizedAccessException("Invalid username or password");
@@ -107,14 +112,13 @@ public class UserService {
      * @throws UnauthorizedAccessException if the user isn't authenticated
      */
     public UserModel getCurrentUser() {
-        var authentication = org.springframework.security.core.context.SecurityContextHolder
-                .getContext()
-                .getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UnauthorizedAccessException("You must be logged in to do this");
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
+            throw new UnauthorizedAccessException("No user logged in");
         }
-        return (UserModel) authentication.getPrincipal();
+        return (UserModel) auth.getPrincipal();
+
     }
 }
 

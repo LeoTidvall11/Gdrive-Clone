@@ -1,9 +1,12 @@
 package assignment.gdrive.controllers;
 
+import assignment.gdrive.assemblers.FileModelAssembler;
 import assignment.gdrive.dtos.FileDTO;
 import assignment.gdrive.models.FileModel;
 import assignment.gdrive.services.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,25 +15,30 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("api/files")
 @RequiredArgsConstructor
 public class FileController {
 
+
     private final FileService fileService;
+    private final FileModelAssembler fileAssembler;
 
     @PostMapping("/upload")
-    public ResponseEntity<FileDTO> upload(
+    public ResponseEntity<EntityModel<FileDTO>> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("folderName") String folderName) throws IOException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fileService.saveFile(file, folderName));
+        FileDTO savedFile = fileService.saveFile(file, folderName);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileAssembler.toModel(savedFile));
     }
 
     @GetMapping("/download/{folderName}/{fileName}")
     public ResponseEntity<byte[]> download(
             @PathVariable String folderName,
-            @PathVariable String fileName
-    )
+            @PathVariable String fileName)
     {
         FileModel file = fileService.downloadFile(folderName, fileName);
 
@@ -49,20 +57,30 @@ public class FileController {
     }
 
     @PatchMapping("/rename/{folderName}/{fileName}")
-    public ResponseEntity<FileDTO> rename
-            (@PathVariable String folderName,
+    public ResponseEntity<EntityModel<FileDTO>> rename(
+             @PathVariable String folderName,
              @PathVariable String fileName,
              @RequestParam String newName) {
-        return ResponseEntity.ok(fileService.renameFile(folderName, fileName, newName));
+        FileDTO updatedFile = fileService.renameFile(folderName, fileName, newName);
+        return ResponseEntity.ok(fileAssembler.toModel(updatedFile));
     }
 
     @GetMapping("/in/{folderName}")
-    public ResponseEntity<List<FileDTO>> findAllByFolder(@PathVariable String folderName) {
-        return ResponseEntity.ok(fileService.findAllByFolder(folderName));
+    public ResponseEntity<CollectionModel<EntityModel<FileDTO>>> findAllByFolder(@PathVariable String folderName) {
+        List<FileDTO> files = fileService.findAllByFolder(folderName);
+
+        CollectionModel<EntityModel<FileDTO>> model = fileAssembler.toCollectionModel(files);
+        model.add(linkTo(methodOn(FileController.class).findAllByFolder(folderName)).withSelfRel());
+
+        return ResponseEntity.ok(model);
     }
     @GetMapping("/my-files")
-    public ResponseEntity<List<FileDTO>> getAllMyFiles() {
-        return ResponseEntity.ok(fileService.findAllByUser());
-    }
+    public ResponseEntity<CollectionModel<EntityModel<FileDTO>>> getAllMyFiles() {
+       List<FileDTO> files = fileService.findAllByUser();
+
+       CollectionModel<EntityModel<FileDTO>> model = fileAssembler.toCollectionModel(files);
+       model.add(linkTo(methodOn(FileController.class).getAllMyFiles()).withSelfRel());
+
+        return ResponseEntity.ok(model);    }
 
 }
