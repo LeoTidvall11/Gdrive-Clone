@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxSizeException(MaxUploadSizeExceededException ex){
-        log.warn("User tried to upload to large of a object");
+        log.warn("User tried to upload to upload an object that is too large");
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.CONTENT_TOO_LARGE.value(),
                 "File too large",

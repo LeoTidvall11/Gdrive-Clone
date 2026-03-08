@@ -45,7 +45,7 @@ public class FolderService {
                     .orElseThrow(() -> new ResourceNotFoundException("Parent folder not found"));
 
             if (!parent.getUser().getId().equals(currentUser.getId())){
-                log.warn("Security alert. User: '{}' tried to create a folder in someone else folder", currentUser.getUsername());
+                log.warn("Security alert. User: '{}' tried to create a folder in someone else's folder", currentUser.getUsername());
                 throw new UnauthorizedAccessException("You do not have permission to modify this folder");
             }
 

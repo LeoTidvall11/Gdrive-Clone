@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation ("org.springframework.boot:spring-boot-starter-web")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
@@ -42,6 +43,7 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.jspecify:jspecify:1.0.0")
     implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation ("com.fasterxml.jackson.core:jackson-databind")
 }
 
 

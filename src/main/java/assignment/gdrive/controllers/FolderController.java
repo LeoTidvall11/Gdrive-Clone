@@ -30,11 +30,11 @@ public class FolderController {
     private final FolderResponseAssembler folderResponseAssembler;
 
     @PostMapping("/create")
-    public ResponseEntity<EntityModel<FolderDTO>> createFolder(@Valid @RequestBody FolderRequest folderRequest){
-       FolderDTO savedFolder = folderService.createFolder(
-               folderRequest.name(),
-               folderRequest.parentId());
-       return ResponseEntity.status(HttpStatus.CREATED).body(folderAssembler.toModel(savedFolder));
+    public ResponseEntity<EntityModel<FolderDTO>> createFolder(@Valid @RequestBody FolderRequest folderRequest) {
+        FolderDTO savedFolder = folderService.createFolder(
+                folderRequest.name(),
+                folderRequest.parentId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(folderAssembler.toModel(savedFolder));
     }
 
     @GetMapping("/{folderName}/content")

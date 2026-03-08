@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -12,13 +13,17 @@ import java.util.UUID;
 
 @Service
 public class JwtService {
-    private static final Algorithm algorithm = Algorithm.HMAC256("Super-Good-Secret");
 
+    private final Algorithm algorithm;
+    private final JWTVerifier verifier;
 
-    private static final JWTVerifier verifier = JWT
-            .require(algorithm)
-            .withIssuer("gdrive-api")
-            .build();
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        this.algorithm = Algorithm.HMAC256(secret);
+        this.verifier = JWT
+                .require(this.algorithm)
+                .withIssuer("gdrive-api")
+                .build();
+    }
 
     public String generateToken (UUID userId){
         return JWT.create()
